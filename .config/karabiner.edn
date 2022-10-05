@@ -1,0 +1,362 @@
+{:default true
+
+ :alone 500
+ :delay 200
+ :held 500
+ :sim 200
+ :simlayer-threshold 222
+ :modifiers {;
+             :super-hyper [:command :shift :control :option :fn]
+             :hyper [:command :shift :control :option]
+             :cos [:command :shift :option]
+             :cst [:command :shift :control]
+             :co [:command :option]
+             :cs [:command :shift]
+             :ct [:command :control]
+             :to [:control :option]
+             :ts [:control :shift]
+             :os [:option :shift]
+             ;
+             }
+ :templates {;
+             :new-note "osascript -e 'tell application id \"com.runningwithcrayons.Alfred\" to run trigger \"new-note\" in workflow \"com.johnlindquist.new-note\" with argument \"\"'"
+             :new-thought ". ~/.jsrc; new-thought"
+             :alfred "osascript -e 'tell application \"Alfred 4\" to run trigger \"%s\" in workflow \"%s\" with argument \"%s\"'"
+             :code-project "osascript -e 'tell application \"Visual Studio Code\" to activate' &&
+                            open -a 'Visual Studio Code' %s -g %s
+                            "
+             :delay "osascript -e 'delay \"%s\"'"
+             :km "osascript -e 'tell application \"Keyboard Maestro Engine\" to do script \"%s\"'"
+             :type "osascript -e 'tell application \"System Events\" to keystroke \"%s\"'"
+             :launch "osascript -e 'tell application \"%s\" to activate'"
+             :open-chrome "osascript -e '
+                        set address to \"%s\"
+                        
+                        tell application \"Google Chrome\"
+                           activate
+                                if not (exists window 1) then reopen
+                                repeat with w in windows
+                                        set i to 1
+                                        repeat with t in tabs of w
+                                        if URL of t contains address then
+                                                set active tab index of w to i
+                                                set index of w to 1
+                                                return
+                                        end if
+                                        set i to i + 1
+                                        end repeat
+                                end repeat
+                                open location \"http://\" & address
+                        end tell
+                           '"
+             :open "open \"%s\""
+             :open-a "open -a '%s'"
+             :paste "osascript -e '
+                        set the clipboard to \"%s\"
+                        tell application \"System Events\"
+                                keystroke \"v\" using command down
+                        end tell
+                '"
+             :restream "osascript -e 'tell application \"Restream Chat\" to activate'"
+             :zsh "zsh ~/.zfunc/'%s'"
+             :print "osascript -e '
+                        set the clipboard to do shell script \". ~/.jsrc; %s\"
+                        tell application \"System Events\"
+                                keystroke \"v\" using command down
+                        end tell
+                     '"
+             :modify "osascript -e '
+                        tell application \"System Events\" to keystroke \"c\" using {command down}
+                        set clipboardText to the clipboard
+                        set selectedText to the quoted form of clipboardText
+                        set output to do shell script \". ~/.jsrc; %s \" & selectedText
+                        set the clipboard to output                    
+                        tell application \"System Events\" to keystroke \"v\" using {command down}
+                     '"
+              :test "osascript -e 'say \"poop\"'"
+              :query "osascript -e '
+                      tell application id \"com.runningwithcrayons.Alfred\" to run trigger \"scripted-list\" in workflow \"com.johnlindquist.scripted-list\" with argument \"%s\"
+                      '"
+             ;
+             }
+; Layers Are Typically "Thumb Keys" or "Pinky Keys"
+ :applications {;
+                :ableton ["com.ableton.live"]
+                :chrome ["com.google.Chrome"]
+                :code ["com.microsoft.VSCode"]
+                :fcp ["com.apple.FinalCut"]
+                :miro ["com.electron.realtimeboard"]
+                :screenflow ["net.telestream.screenflow9"]
+                :slack ["com.tinyspeck.slackmacgap"]
+                :webstorm ["com.jetbrains.Webstorm"]
+                ;
+                }
+; Layers Are Typically "Thumb Keys" or "Pinky Keys"
+ :layers {;
+          :caps_lock-mode {:key :caps_lock :alone {:key :escape}}
+          :escape-mode {:key :escape :alone {:key :escape}}
+          :f23-mode {:key :f23 :alone  {:key :vk_none}}
+          :launch-mode {:key :f24 :alone {:key :spacebar :modi :left_option}}
+          :non-mode {:key :non_us_backslash :alone {:key :non_us_backslash}}
+          :num-mode {:key :keypad_num_lock :alone {:key :vk_none}}
+          :shift-mode {:key :shift}
+          :tab-mode {:key :tab :alone {:key :tab}}
+          :tilde-mode {:key :grave_accent_and_tilde :alone {:key :grave_accent_and_tilde}}
+
+          ;testing left thumb + right thumb
+          :f24-shift-mode {:key :left_shift :condi :launch-mode}
+
+          ;
+          }
+ :simlayers {;
+             :snippet-mode {:key :quote}
+             :media-mode {:key :period}
+             :tab-mode {:key :tab}
+
+             :query-mode {:key :q}
+
+             :hyphen-mode {:key :hyphen :alone {:key :hyphen}}
+
+             :alt-mode {:key :a}
+             :alt-shift-mode {:key :s}
+             :d-mode {:key :d}
+        ;      :movement-mode {:key :f}
+             :cursor-mode {:key :g}
+             :delete-mode {:key :j}
+
+             :emoji-mode {:key :z}
+
+             :equals-mode {:key :equal_sign}
+             :slash-mode {:key :slash}
+
+             :semicolon-mode {:key :semicolon}
+             :backslash-mode {:key :backslash}
+
+             :spacebar-mode {:key :spacebar}
+
+             :editor-mode {:key :k}
+             :print-mode {:key :r} ;"p" in colemak
+             :create-mode {:key :c} ;
+             :modify-mode {:key :m} ;
+             :open-mode {:key :semicolon}; "o" in colemak
+             :wrap-mode {:key :w} ;
+             :pretzel-mode {:key :u}; Global shortcuts for a music app called "Pretzel"
+ ;
+             }
+ :devices {;; Note - I'm currently using a Kinesis Advantage keyboard for my defaults
+           ;; and my macbook hasn't left my desk in a looooooong time...
+           :macbook [{:product_id 832 :vendor_id 1452}]
+           ;
+           }
+ :main [;
+;
+        {:des "emoji"
+         :rules [:emoji-mode
+                 [:a [:paste ""]] ;                
+                 [:b [:paste "😊"]] ;blush
+                 [:c [:paste "👏"]] ;clap
+                 [:d [:paste "🧐"]] ;dignified
+                ;  [:e :emoji_picker] 
+                 [:f [:paste "🤦‍♂️"]] ;facepalm️
+                 [:g [:paste "😬"]] ;grimace
+                 [:h [:paste "😍"]] ;hearteyes
+                 [:i [:paste "👀"]] ;I
+                 [:j [:paste "😂"]] ;joking
+                 [:k [:paste ""]] ;
+                 [:l [:paste "❤️"]] ;love
+                 [:m [:paste "🤯"]] ;mind blown 
+                ;  [:n :emoji_picker] ;
+                 [:o [:paste "💩"]] ;pOop
+                 [:p [:paste "🎉"]] ;party
+                 [:q [:paste "🤫"]] ;quiet
+                 [:r [:paste "🏎"]] ;racecar
+                 [:s [:paste "😢"]] ;sad
+                 [:t [:paste "🤔"]] ;thinking
+                 [:u [:paste "🤷‍♂️"]] ;shrUg
+                 [:v [:paste "😎"]] ;very cool
+                 [:w [:paste "😉"]] ;wink:
+                 [:x [:paste "😵"]] ;xeyes
+                 [:y [:paste "😅"]] ;sweatY
+                 [:left_command [:paste "👍"]]
+                 [:left_option [:paste "👎"]]
+                 ;
+                 ]}
+
+
+        {:des "caps_lock"
+         :rules [:caps_lock-mode
+                 [:##caps_lock :##escape]
+                 ; I don't use a caps_lock key on my keyboard
+                 ;
+                 ]}
+
+
+        {:des "homerow cursor" 
+         :rules [:cursor-mode
+                 [:h :cursor_find_match]
+                 [:j :cursor_below]
+                 [:k :cursor_above]
+                 [:-j :acejump]
+                 [:-l :acejump_line]
+                 [:-m :acejump_multi]
+                 [:left_shift :acejump_selection]
+                 ]
+         }
+
+        ; {:des "homerow movement"
+
+        ;  :rules [:movement-mode
+        ;          [:##y :!Cleft_arrow]
+        ;          [:##o :!Cright_arrow]
+
+        ;          [:##h :left_arrow]
+        ;          [:##j :down_arrow]
+        ;          [:##k :up_arrow]
+        ;          [:##l :right_arrow]
+
+        ;          [:semicolon :autocomplete]
+
+        ;          [:return_or_enter :insert_line_below]
+
+
+
+
+        ;          [:left_shift :expand_selection]
+        ;          ;
+        ;          ]}
+
+        {:des "homerow alt+shift"
+         :rules [:alt-shift-mode
+                 [:##h :!OSleft_arrow]
+                 [:##j :!OSdown_arrow]
+                 [:##k :!OSup_arrow]
+                 [:##l :!OSright_arrow]
+
+                 [:##spacebar {:pkey :button1 :modi :left_command}]
+                 [:##left_shift :##button2]
+
+                 ;
+                 ]}
+
+        {:des "homerow shift"
+         :rules [:d-mode
+                 [:##y :!Shome]
+                 [:##o :!Send]
+
+                 [:##h :!Sleft_arrow]
+                 [:##j :!Sdown_arrow]
+                 [:##k :!Sup_arrow]
+                 [:##l :!Sright_arrow]
+
+
+                 [:left_shift :shrink_selection]
+                 [:return_or_enter :insert_line_above]
+
+                 [:semicolon :expand_selection]
+                 [:quote :shrink_selection]
+
+                 ;
+                 ]}
+        {:des "homerow alt"
+         :rules [:alt-mode
+                 [:##y :home]
+
+                 [:##o :end]
+
+                 [:##h :!Oleft_arrow]
+                 [:##j :!Odown_arrow]
+                 [:##k :!Oup_arrow]
+                 [:##l :!Oright_arrow]
+                 ;
+                 ]}
+        {:des "homerow control"
+         :rules [:hyphen-mode
+                ;  [:h {:mkey {:hwheel 60}}]
+                ;;   [:j {:mkey {:vwheel 100}}]
+                ;;   [:##k {:mkey {:vwheel -60}}]
+
+                ;  [:l {:mkey {:hwheel -60}}]
+                 [:##d :left_shift]
+
+
+                 [:##h :!Fleft_arrow]
+                 [:##j :!Fdown_arrow]
+                 [:##k :!Fup_arrow]
+                 [:##l :!Fright_arrow]
+                ;  ;
+                 ]}
+
+
+        {:des "spacebar"
+         :rules [:spacebar-mode
+                 ;symbols [](){}<>
+                 [:a :open_bracket]
+                 [:s :close_bracket]
+
+                 [:d :open_paren]
+                 [:f :close_paren]
+
+                 [:j :open_brace]
+                 [:k :close_brace]
+
+                 [:l :less_than]
+                 [:semicolon :greater_than]
+
+                 ;symbol sequences
+                 [:left_shift [:spacebar :equal_sign :spacebar]]; =  =  =  =  =  =  =  =  =  =
+                 [:q [:!S9 :!S0 :equal_sign :greater_than :spacebar]];()=> 
+                 [:e [:!S9 :!S9 :!S0 :equal_sign :greater_than :spacebar :open_brace :close_brace :!S0 :left_arrow :left_arrow]];(()=> {})
+
+                 [:g [:spacebar :equal_sign :greater_than :spacebar]]; =>  => ={} =""
+                 [:h [:equal_sign :open_brace :close_brace :left_arrow]];={}
+                 [:b [:equal_sign :open_brace :close_brace :left_arrow]];={}
+                 [:quote [:equal_sign :!Squote :!Squote :left_arrow]];=""
+
+
+                 ;macros
+
+
+                 ;
+                 ]}
+
+
+        {:des "special characters"
+         :rules [:tilde-mode
+                 ;special characters: !@#$%^&*()
+                ;;  [:##a :!S1]
+                ;;  [:##s :!S2]
+                ;;  [:##d :!S3]
+                ;;  [:##f :!S4]; 
+                ;;  [:##g :!S5]
+                ;;  [:##h :!S6]
+                ;;  [:##j :!S7]
+                ;;  [:##k :!S8]
+                ;;  [:##l :!S9]
+                ;;  [:##semicolon :!S0]
+                 [:-e :!S1]; ! exclaim
+                 [:-a :!S2]; @ at
+                 [:-h :!S3]; # hash
+                 [:-d :!S4]; $ dollar
+                 [:-p :!S5]; % percent
+                 [:-c :!S6]; ^ caret
+                 [:-s :!S7]; & amperSand
+                 [:-b :!S8]; * bullet
+                 ; 
+                 ]}
+
+        {:des "numbers"
+         :rules [:non-mode
+                 [:##a :1]
+                 [:##s :2]
+                 [:##d :3]
+                 [:##f :4]; 
+                 [:##g :5]
+                 [:##h :6]
+                 [:##j :7]
+                 [:##k :8]
+                 [:##l :9]
+                 [:##semicolon :0]
+                 ;
+                 ]}
+
+        ]}
